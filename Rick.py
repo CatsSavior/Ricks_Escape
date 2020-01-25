@@ -11,8 +11,8 @@ class Rick(pygame.sprite.Sprite):
                                                          self.height))
         self.rect = self.image.get_rect()
         self.rect.center = (x,y)
-        self.left_cord = int(self.rect.x)
-        self.right_cord = int(self.rect.x + self.width)
+        self.left_cord = int(self.rect.x) + 96
+        self.right_cord = int(self.rect.x + self.width) + 96
         self.up_cord = int(self.rect.y)
         self.down_cord = int(self.rect.y + self.height)
 

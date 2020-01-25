@@ -84,10 +84,10 @@ while running:
     # collision_list = []
     # print(collision_list)
 
-    # if ('bottom' not in collision_list) and not isJump:
-    #     fall, delta = phys.gravity(player, block_sprites)
-    #     if fall:
-    #         last_pos = 'Fall'
+    if ('bottom' not in collision_list) and not isJump:
+        fall, delta = phys.gravity(player, block_sprites)
+        if fall:
+            last_pos = 'Fall'
 
     #     print(delta_y)
 
@@ -153,7 +153,8 @@ while running:
     if keys[pygame.K_s] and ('bottom' not in collision_list):
         player.down(speed)
 
-    if keys[pygame.K_w] and not(player.rect.center[1] <= (height//6 - player.image.get_width()/2)):
+    if (keys[pygame.K_w] and not(player.rect.center[1] <= (height//6 - player.image.get_width()/2))) and\
+            ('top' not in collision_list):
         player.up(speed)
 
 

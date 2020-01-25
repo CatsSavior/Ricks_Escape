@@ -6,6 +6,7 @@ class Physics:
         self.collision_list = []
         self.item = None
         self.delta = 0
+        self.min_dist = 99999
 
     def collision(self, player, blocks_obj):
         self.collision_list = []
@@ -23,7 +24,7 @@ class Physics:
                     and ((player.left_cord in range(o.rect.left - 1, o.rect.right - 1) or
                           (player.right_cord in range(o.rect.left - 1, o.rect.right - 1)))):
                 self.collision_list.append('bottom')
-            if (player.up_cord in list(range(o.rect.bottom, o.rect.bottom - 20))) \
+            if (player.up_cord in list(range(o.rect.bottom - 15, o.rect.bottom - 20))) \
                     and ((player.left_cord in range(o.rect.left - 1, o.rect.right - 1) or
                           (player.right_cord in range(o.rect.left - 1, o.rect.right - 1)))):
                 self.collision_list.append('top')
@@ -33,29 +34,36 @@ class Physics:
 
         max_height = 99999
         min_height = 0
-        for o in blocks_obj:
-            if ((o.rect.top in list(range(player.rect.y + 108, player.rect.y + 128 + 64))) or
-                (o.rect.bottom in list(range(player.rect.y - 64, player.rect.y)))) and \
-                    ((o.rect.right in list(range(player.rect.center[0] - 16, player.rect.center[0] + 16)) or
-                     (o.rect.left in list(range(player.rect.center[0] - 16, player.rect.center[0] + 16))))):
-                max_height = min(max_height, o.rect.top)
-                min_height = max(min_height, o.rect.top)
+        self.min_dist = 9999
         self.item = player
+        for self.o in blocks_obj:
 
-        if (0 < (max_height - player.down_cord)) and ((max_height - player.down_cord) < 20):
-            self.item.down(max_height - player.down_cord)
-            self.delta = max_height - player.down_cord
+            if ((self.o.rect.right >= self.item.left_cord) and (self.item.right_cord >= self.o.rect.right)) or \
+                    ((self.o.rect.left >= self.item.left_cord) and (self.item.right_cord >= self.o.rect.left)):
+                print(self.item.down_cord, self.o.rect.top)
+                if (self.o.rect.top - self.item.down_cord) > 0:
+                    self.min_dist = min(self.min_dist, self.o.rect.top - self.item.down_cord)
+                # max_height = min(max_height, o.rect.top)
+                # min_height = max(min_height, o.rect.top)
 
-        elif (0 < (min_height - player.down_cord)) and ((min_height - player.down_cord) < 20):
-            self.item.down(min_height - player.down_cord)
-            self.delta = min_height - player.down_cord
+        # if (0 < (max_height - player.down_cord)) and ((max_height - player.down_cord) < 20):
+        #     self.item.down(max_height - player.down_cord)
+        #     self.delta = max_height - player.down_cord
+        #
+        # elif (0 < (min_height - player.down_cord)) and ((min_height - player.down_cord) < 20):
+        #     self.item.down(min_height - player.down_cord)
+        #     self.delta = min_height - player.down_cord
 
-        elif (min_height - player.down_cord) >= 20:
+        if self.min_dist <= 20:
+            self.item.down(self.min_dist)
+            self.delta = self.min_dist
+
+        else:
             self.item.down(20)
             self.delta = 20
 
-        elif max_height >= player.down_cord + 20:
-            self.item.down(20)
-            self.delta = 20
+        # elif max_height >= player.down_cord + 20:
+        #     self.item.down(20)
+        #     self.delta = 20
 
         return True, self.delta
