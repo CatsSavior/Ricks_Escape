@@ -16,8 +16,33 @@ class Rick(pygame.sprite.Sprite):
         self.up_cord = int(self.rect.y)
         self.down_cord = int(self.rect.y + self.height)
 
-        self.stand_array = [pygame.image.load('src\\Rick\\RickStay_01_01.png'),
-                            pygame.image.load('src\\Rick\\RickStay_01_02.png')]
+        self.stand_array = [pygame.transform.scale(pygame.image.load('src\\Rick\\RickStay_01_01.png'),
+                                                   (self.width, self.height)),
+                            pygame.transform.scale(pygame.image.load('src\\Rick\\RickStay_01_02.png'),
+                                                   (self.width, self.height))]
+        self.right_array = [pygame.transform.scale(pygame.image.load('src\\Rick\\RickRun_03_01.png'),
+                                                   (self.width, self.height)),
+                            pygame.transform.scale(pygame.image.load('src\\Rick\\RickRun_03_02.png'),
+                                                   (self.width, self.height)),
+                            pygame.transform.scale(pygame.image.load('src\\Rick\\RickRun_03_03.png'),
+                                                   (self.width, self.height)),
+                            pygame.transform.scale(pygame.image.load('src\\Rick\\RickRun_03_04.png'),
+                                                   (self.width, self.height))]
+
+        self.jump_up_array = []
+
+        self.fall = []
+
+        self.shoot_array = [pygame.transform.scale(pygame.image.load('src\\Rick\\RickShoot_02_01.png'),
+                                                   (self.width, self.height)),
+                            pygame.transform.scale(pygame.image.load('src\\Rick\\RickShoot_02_02.png'),
+                                                   (self.width, self.height)),
+                            pygame.transform.scale(pygame.image.load('src\\Rick\\RickShoot_02_03.png'),
+                                                   (self.width, self.height)),
+                            pygame.transform.scale(pygame.image.load('src\\Rick\\RickShoot_02_02.png'),
+                                                   (self.width, self.height)),
+                            pygame.transform.scale(pygame.image.load('src\\Rick\\RickShoot_02_01.png'),
+                                                   (self.width, self.height))]
 
     def right(self, speed):
         self.rect.x += speed
@@ -41,14 +66,20 @@ class Rick(pygame.sprite.Sprite):
 
     def animation(self, i, state='Stand'):
         if state == 'Right':
-            pass
+            if i % 5 == 0:
+                self.image = self.right_array[i % 4]
         if state == 'Left':
-            pass
+            if i % 5 == 0:
+                self.image = pygame.transform.flip(self.right_array[i % 4], True, False)
         if state == 'Stand':
+            if i % 5 == 0:
+                self.image = self.stand_array[i % 2]
+        if state == 'RightShoot':
             pass
-        if state == 'RightBul':
+        if state == 'LeftShoot':
             pass
-        if state == 'LeftBul':
+        if state == 'JumpUp':
             pass
-        if state == 'Jump':
+        if state == 'Fall':
             pass
+
