@@ -13,7 +13,7 @@ phys = Physics.Physics()
 win = pygame.display.set_mode((width, height), pygame.FULLSCREEN)
 pygame.display.set_caption('Test_game')
 
-mpbg = pygame.image.load('src\\map.png')
+mpbg = pygame.image.load('src/map.png')
 mpbg_width = mpbg.get_width()*4
 mpbg_height = mpbg.get_height()*4
 mpbg = pygame.transform.scale(mpbg, (mpbg_width, mpbg_height))
