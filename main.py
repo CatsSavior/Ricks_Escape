@@ -130,7 +130,7 @@ while running:
             pos_x = last_pos
 
     if ('bottom' in collision_list) and not isJump:
-        if keys[pygame.K_SPACE]:
+        if keys[pygame.K_u]:
             isJump = True
     elif isJump:
         if (jumpCount >= 0) and not('top' in collision_list):
