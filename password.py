@@ -69,4 +69,7 @@ def passw(true_pass):
             print('win')
             mainLoop = False
         pygame.display.update()
-passw(1984)
+
+
+if __name__ == '__main__':
+    passw(1984)

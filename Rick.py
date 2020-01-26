@@ -1,10 +1,11 @@
 import pygame
+from time import sleep
 
 
 class Rick(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('src/Rick/rick.png')
+        self.image = pygame.image.load('src\\Rick\\rick.png')
         self.width = self.image.get_width()*4
         self.height = self.image.get_height()*4
         self.image = pygame.transform.scale(self.image, (self.width,
@@ -16,37 +17,37 @@ class Rick(pygame.sprite.Sprite):
         self.up_cord = int(self.rect.y)
         self.down_cord = int(self.rect.y + self.height)
 
-        self.stand_array = [pygame.transform.scale(pygame.image.load('src/Rick/RickStay_01_01.png'),
+        self.stand_array = [pygame.transform.scale(pygame.image.load('src\\Rick\\RickStay_01_01.png'),
                                                    (self.width, self.height)),
-                            pygame.transform.scale(pygame.image.load('src/Rick/RickStay_01_02.png'),
+                            pygame.transform.scale(pygame.image.load('src\\Rick\\RickStay_01_02.png'),
                                                    (self.width, self.height))]
-        self.right_array = [pygame.transform.scale(pygame.image.load('src/Rick/RickRun_03_01.png'),
+        self.right_array = [pygame.transform.scale(pygame.image.load('src\\Rick\\RickRun_03_01.png'),
                                                    (self.width, self.height)),
-                            pygame.transform.scale(pygame.image.load('src/Rick/RickRun_03_02.png'),
+                            pygame.transform.scale(pygame.image.load('src\\Rick\\RickRun_03_02.png'),
                                                    (self.width, self.height)),
-                            pygame.transform.scale(pygame.image.load('src/Rick/RickRun_03_03.png'),
+                            pygame.transform.scale(pygame.image.load('src\\Rick\\RickRun_03_03.png'),
                                                    (self.width, self.height)),
-                            pygame.transform.scale(pygame.image.load('src/Rick/RickRun_03_04.png'),
+                            pygame.transform.scale(pygame.image.load('src\\Rick\\RickRun_03_04.png'),
                                                    (self.width, self.height))]
 
-        self.jump_up_array = [pygame.transform.scale(pygame.image.load('src/Rick/RickJump_04_01.png'),
+        self.jump_up_array = [pygame.transform.scale(pygame.image.load('src\\Rick\\RickJump_04_01.png'),
                                                      (self.width, self.height))]
 
-        self.fall = [pygame.transform.scale(pygame.image.load('src/Rick/RickJump_04_02.png'),
+        self.fall = [pygame.transform.scale(pygame.image.load('src\\Rick\\RickJump_04_02.png'),
                                                      (self.width, self.height))]
 
-        self.shoot_array = [pygame.transform.scale(pygame.image.load('src/Rick/RickShoot_02_01.png'),
+        self.shoot_array = [pygame.transform.scale(pygame.image.load('src\\Rick\\RickShoot_02_01.png'),
                                                    (self.width, self.height)),
-                            pygame.transform.scale(pygame.image.load('src/Rick/RickShoot_02_02.png'),
+                            pygame.transform.scale(pygame.image.load('src\\Rick\\RickShoot_02_02.png'),
                                                    (self.width, self.height)),
-                            pygame.transform.scale(pygame.image.load('src/Rick/RickShoot_02_03.png'),
+                            pygame.transform.scale(pygame.image.load('src\\Rick\\RickShoot_02_03.png'),
                                                    (self.width, self.height)),
-                            pygame.transform.scale(pygame.image.load('src/Rick/RickShoot_02_02.png'),
+                            pygame.transform.scale(pygame.image.load('src\\Rick\\RickShoot_02_02.png'),
                                                    (self.width, self.height)),
-                            pygame.transform.scale(pygame.image.load('src/Rick/RickShoot_02_01.png'),
+                            pygame.transform.scale(pygame.image.load('src\\Rick\\RickShoot_02_01.png'),
                                                    (self.width, self.height))]
 
-        self.died_sprite = pygame.transform.scale(pygame.image.load('src/Rick/rickDead_05.png'),
+        self.died_sprite = pygame.transform.scale(pygame.image.load('src\\Rick\\rickDead_05.png'),
                                                   (self.width, self.height))
 
     def right(self, speed):

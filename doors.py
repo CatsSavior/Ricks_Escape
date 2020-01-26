@@ -4,8 +4,8 @@ import pygame
 class Door(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((32*4, 4*128))
-        self.image.fill((0, 255, 0))
+        self.image = pygame.transform.scale2x(pygame.transform.scale2x(pygame.image.load('src\\env\\doorIron.png')))
+        # self.image.fill((0, 255, 0))
 
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
