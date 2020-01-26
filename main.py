@@ -1,8 +1,9 @@
 import pygame
 import Rick
-# import Block
 import Physics
+import Shoot
 import create_level
+from time import sleep
 
 width = 1280
 height = 1024
@@ -12,7 +13,7 @@ phys = Physics.Physics()
 win = pygame.display.set_mode((width, height), pygame.FULLSCREEN)
 pygame.display.set_caption('Test_game')
 
-mpbg = pygame.image.load('mapAll.png')
+mpbg = pygame.image.load('src\\map.png')
 mpbg_width = mpbg.get_width()*4
 mpbg_height = mpbg.get_height()*4
 mpbg = pygame.transform.scale(mpbg, (mpbg_width, mpbg_height))
@@ -24,10 +25,11 @@ bg = pygame.transform.scale(bg, (bg_width, bg_height))
 
 x = width/2
 y = height - 64
-speed = 15
+speed = 20
+bull_speed = 35
 
 x_mpbg = 0
-y_mpbg = 0
+y_mpbg = -128*2
 x_bg = -500
 y_bg = -500
 
@@ -35,35 +37,32 @@ running = True
 
 gg_sprites = pygame.sprite.Group()
 block_sprites = pygame.sprite.Group()
+bullet_sprites = pygame.sprite.Group()
+kill_sprites = pygame.sprite.Group()
 
 blocks = []
-create_level.create_lvl(height, block_sprites)
-# for i in range(8):
-#     block_sprites.add(Block.Block(64+128*i, height-64-16))
-# block_sprites.add(Block.Block(64+128*6, height-64-128))
-# block_sprites.add(Block.Block(64+128*6, height-64-128*2))
-# block_sprites.add(Block.Block(64+128*6, height-64-128*3))
-# pygame.Rect.unionall(block_sprites.sprites())
+create_level.create_lvl(height, block_sprites, kill_sprites)
 player = Rick.Rick(100, 300)
 gg_sprites.add(player)
 
 clock = pygame.time.Clock()
 
 isJump = False
+isShoot = False
 jumpCount = 14
-
 fall_time = 0
-
+shoot_count = 0
 last_pos = 'Stand'
-
 anim_iter = 0
-
 fall = False
+pos_x = 'Left'
+pos_y = None
 
 while running:
     clock.tick(60)
     delta = 0
     last_pos = 'Stand'
+    pos_y = None
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -87,7 +86,7 @@ while running:
     if ('bottom' not in collision_list) and not isJump:
         fall, delta = phys.gravity(player, block_sprites)
         if fall:
-            last_pos = 'Fall'
+            pos_y = 'Fall'
 
     #     print(delta_y)
 
@@ -101,35 +100,44 @@ while running:
         if keys[pygame.K_a] and player.rect.x >= (width//3 - player.image.get_width()/2):
             player.left(speed)
             last_pos = 'Left'
+            pos_x = last_pos
             # player.animation(anim_iter, last_pos)
         elif keys[pygame.K_a]:
             x_bg += speed*1.1
             x_mpbg += speed
             for o in block_sprites:
                 o.left(speed)
+            for k in kill_sprites:
+                k.left(delta)
             last_pos = 'Left'
+            pos_x = last_pos
             # player.animation(anim_iter, last_pos)
 
     if not('right' in collision_list):
         if keys[pygame.K_d] and player.rect.x <= (width - width//3 - player.image.get_width()/2):
             player.right(speed)
             last_pos = 'Right'
+            pos_x = last_pos
 
         elif keys[pygame.K_d]:
             x_bg -= speed*1.1
             x_mpbg -= speed
             for o in block_sprites:
                 o.right(speed)
+            for k in kill_sprites:
+                k.right(delta)
             last_pos = 'Right'
+            pos_x = last_pos
 
     if ('bottom' in collision_list) and not isJump:
         if keys[pygame.K_SPACE]:
             isJump = True
-    elif isJump and not('up' in collision_list):
-        if jumpCount >= 0:
+    elif isJump:
+        if (jumpCount >= 0) and not('top' in collision_list):
             player.up(jumpCount*abs(jumpCount)*0.4)
             jumpCount -= 1
-        else:
+            pos_y = 'JumpUp'
+        elif (jumpCount < 0) or ('top' in collision_list):
             jumpCount = 14
             isJump = False
 
@@ -137,18 +145,54 @@ while running:
         delta = player.down_cord - 700
         player.up(delta)
         y_bg -= delta
-        # y_mpbg += delta
+        y_mpbg -= delta
         for o in block_sprites:
             o.down(delta)
+        for k in kill_sprites:
+            k.down(delta)
 
     elif player.up_cord <= 200:
 
         delta = player.up_cord - 200
         player.up(delta)
         y_bg -= delta
-        # y_mpbg += delta
+        y_mpbg -= delta
         for o in block_sprites:
             o.down(delta)
+        for k in kill_sprites:
+            k.down(delta)
+
+    if keys[pygame.K_n] and (not isShoot):
+        isShoot = True
+        shoot_side = pos_x
+
+    if isShoot:
+        if shoot_count == 0:
+            if shoot_side == 'Right':
+                last_pos = 'RightShoot'
+            elif shoot_side == 'Left':
+                last_pos = 'LeftShoot'
+            shoot_count += 1
+
+        elif shoot_count == 18:
+            if shoot_side == 'Right':
+                last_pos = 'RightShoot'
+                bullet_sprites.add(Shoot.Bullet(player.right_cord, player.up_cord+27*4, 1))
+            elif shoot_side == 'Left':
+                last_pos = 'LeftShoot'
+                bullet_sprites.add(Shoot.Bullet(player.left_cord, player.up_cord+27*4, -1))
+            shoot_count += 1
+
+        elif shoot_count < 25:
+            if shoot_side == 'Right':
+                last_pos = 'RightShoot'
+            elif shoot_side == 'Left':
+                last_pos = 'LeftShoot'
+            shoot_count += 1
+
+        elif shoot_count >= 25:
+            isShoot = False
+            shoot_count = 0
 
     if keys[pygame.K_s] and ('bottom' not in collision_list):
         player.down(speed)
@@ -156,8 +200,6 @@ while running:
     if (keys[pygame.K_w] and not(player.rect.center[1] <= (height//6 - player.image.get_width()/2))) and\
             ('top' not in collision_list):
         player.up(speed)
-
-
 
     # print(player.rect.center)
     # if player.rect.center[1] >= (height - height//6 - player.image.get_width()/2):
@@ -172,16 +214,31 @@ while running:
     #     y_mpbg += delta_y
     #     for o in block_sprites:
     #         o.up(delta_y)
-    player.animation(anim_iter, last_pos)
+
+    for b in bullet_sprites:
+        hit = pygame.sprite.spritecollide(b, block_sprites, dokill=False)
+        if not hit:
+            b.move(bull_speed)
+        else:
+            bullet_sprites.remove(b)
+
+    player.animation(anim_iter, last_pos, pos_y, shoot_count)
+
+    for k in kill_sprites:
+        hit = pygame.sprite.spritecollide(k, gg_sprites, dokill=False)
+        if hit:
+            player.die()
+            running = False
+
     win.fill((100,100,100))
     win.blit(bg, (x_bg,y_bg))
-    # win.blit(mpbg, (x_mpbg,wwwwwwy_mpbg))
+    win.blit(mpbg, (x_mpbg, y_mpbg))
+    bullet_sprites.update()
     gg_sprites.update()
     block_sprites.update()
+    bullet_sprites.draw(win)
     gg_sprites.draw(win)
     block_sprites.draw(win)
-    # pygame.draw.circle(win, (255, 0, 0), (player.left_cord, player.up_cord), 10)
-    # pygame.draw.circle(win, (255, 0, 0), (player.right_cord, player.down_cord), 10)
     pygame.display.update()
 
     if anim_iter < 58:

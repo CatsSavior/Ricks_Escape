@@ -1,8 +1,9 @@
 import pygame
 import Block
+import KillBlock
 
 
-def create_lvl(height, block_sprites):
+def create_lvl(height, block_sprites, kill_sprites):
     for _ in range(height-192, height, 128):
         for i in range(9):
             block_sprites.add(Block.Block(64+128*i, _))
@@ -34,7 +35,7 @@ def create_lvl(height, block_sprites):
     for i in range(5):
         block_sprites.add(Block.Block(128*21-64 + 128 * i, height+320+128*2)) #7
     block_sprites.add(Block.Block(64, height + 320 + 128 * 3))
-    for i in range(6):
+    for i in range(5):
         block_sprites.add(Block.Block(128*13-64 + 128 * i, height+320+128*3))
     for i in range(7):
         block_sprites.add(Block.Block(128 * 20 - 64 + 128 * i, height + 320 + 128 * 3)) #8
@@ -44,12 +45,14 @@ def create_lvl(height, block_sprites):
     for i in range(3):
         block_sprites.add(Block.Block(128 * 15 - 64 + 128 * i, height + 320 + 128 * 4))
     for i in range(7):
-        block_sprites.add(Block.Block(128 * 20 - 64 + 128 * i, height + 320 + 128 * 4)) #9
+        block_sprites.add(Block.Block(128 * 20 - 64 + 128 * i, height + 320 + 128 * 4))
+    for i in range(10):
+        kill_sprites.add(KillBlock.Block(128 * 27 - 64 + 128 * i, height + 320 + 128 * 4)) #9
     block_sprites.add(Block.Block(64, height + 320 + 128 * 5))
     block_sprites.add(Block.Block(128*16-64, height + 320 + 128 * 5))
     block_sprites.add(Block.Block(128 * 20 - 64,  height + 320 + 128 * 5)) #10
     for i in range(7):
-        block_sprites.add(Block.Block(64, height + 320 + 128 * 6))
+        block_sprites.add(Block.Block(64 + 128*i, height + 320 + 128 * 6))
     block_sprites.add(Block.Block(128 * 19 - 64, height + 320 + 128 * 6)) #11
     for i in range(8):
         block_sprites.add(Block.Block(64+128*i, height + 320 + 128 * 7)) #12
@@ -104,13 +107,11 @@ def create_lvl(height, block_sprites):
         block_sprites.add(Block.Block(128*15-64+128*i, height + 320 + 128 * 19)) #-10
     for i in range(18):
         block_sprites.add(Block.Block(128*17-64+128*i, height + 320 + 128 * 20)) #-11
+    for i in range(16):
+        kill_sprites.add(KillBlock.Block(64+128*i, height + 320 + 128 * 20))
     for i in range(17):
         block_sprites.add(Block.Block(128*18-64+128*i, height + 320 + 128 * 21)) #-12
     for i in range(34):
         block_sprites.add(Block.Block(64+128*i, height + 320 + 128 * 22)) #-13
 
-
-
-
-
-    return block_sprites
+    return block_sprites, kill_sprites
