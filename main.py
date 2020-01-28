@@ -115,7 +115,7 @@ while running:
         print(phys.collision(player, door_sprites))
         print(abs(player.rect.center[0] - d.rect.center[0]))
         print(abs(player.rect.center[1] - d.rect.center[1]))
-    if (abs(player.rect.center[0] - d.rect.center[0]) < 160) and (abs(player.rect.center[1] - d.rect.center[1]) < 200):
+    if (abs(player.rect.center[0] - d.rect.center[0]) < 160) and (abs(player.rect.center[1] - d.rect.center[1]) < 300):
         collision_list.append('right')
 
     if ('bottom' not in collision_list) and not isJump:
