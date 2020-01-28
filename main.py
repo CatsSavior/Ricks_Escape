@@ -5,6 +5,8 @@ import Shoot
 import create_level
 import password
 import doors
+import paper
+
 
 width = 1280
 height = 1024
@@ -21,7 +23,8 @@ computer_pressed = 0
 
 pygame.init()
 phys = Physics.Physics()
-win = pygame.display.set_mode((width, height), pygame.FULLSCREEN)
+# win = pygame.display.set_mode((width, height), pygame.FULLSCREEN)
+win = pygame.display.set_mode((width, height))
 pygame.display.set_caption('Test_game')
 
 mpbg = pygame.image.load('src\\map.png')
@@ -31,13 +34,18 @@ mpbg = pygame.transform.scale(mpbg, (mpbg_width, mpbg_height))
 mpbg_back = mpbg
 
 bg = pygame.image.load('background.png')
-# bg_width = bg.get_width()*5
-# bg_height = bg.get_height()*5
-# bg = pygame.transform.scale(bg, (bg_width, bg_height))
+bg_width = bg.get_width()*4
+bg_height = bg.get_height()*4
+bg = pygame.transform.scale(bg, (bg_width, bg_height))
 
 died = pygame.image.load('src\\died.png')
 died = pygame.transform.scale(pygame.image.load('src\\died.png'),
                               (died.get_width()*4, died.get_height()*4))
+
+zapiska = pygame.transform.scale2x(pygame.transform.scale2x(pygame.image.load('src\\env\\1984.png')))
+zap_x = 128*22
+zap_y = 128*9 + 32
+
 x = width/2
 y = height - 64
 speed = 20
@@ -46,7 +54,7 @@ bull_speed = 35
 x_mpbg = 0
 y_mpbg = -128*2
 x_bg = 0
-y_bg = 0
+y_bg = -800
 
 running = True
 
@@ -55,9 +63,10 @@ block_sprites = pygame.sprite.Group()
 bullet_sprites = pygame.sprite.Group()
 kill_sprites = pygame.sprite.Group()
 door_sprites = pygame.sprite.Group()
+bdoor_sprites = pygame.sprite.Group()
 
 blocks = []
-create_level.create_lvl(height, block_sprites, kill_sprites, door_sprites)
+create_level.create_lvl(height, block_sprites, kill_sprites, door_sprites, bdoor_sprites)
 player = Rick.Rick(100, 300)
 gg_sprites.add(player)
 
@@ -88,8 +97,10 @@ ur_anim = 0
 ur_y = 128*31
 ur_x = 0
 
+pygame.mixer.music.load('src\\music.WAV')
+pygame.mixer.music.play(-1)
+
 while running:
-    clock.tick(60)
     delta = 0
     last_pos = 'Stand'
     pos_y = None
@@ -100,6 +111,12 @@ while running:
 
     keys = pygame.key.get_pressed()
     collision_list = phys.collision(player, block_sprites)
+    for d in door_sprites:
+        print(phys.collision(player, door_sprites))
+        print(abs(player.rect.center[0] - d.rect.center[0]))
+        print(abs(player.rect.center[1] - d.rect.center[1]))
+    if (abs(player.rect.center[0] - d.rect.center[0]) < 160) and (abs(player.rect.center[1] - d.rect.center[1]) < 200):
+        collision_list.append('right')
 
     if ('bottom' not in collision_list) and not isJump:
         fall, delta = phys.gravity(player, block_sprites)
@@ -120,12 +137,15 @@ while running:
             computer_x += speed
             wat_x += speed
             ur_x += speed
+            zap_x += speed
             for o in block_sprites:
                 o.left(speed)
             for k in kill_sprites:
                 k.left(speed)
             for d in door_sprites:
                 d.left(speed)
+            for b in bdoor_sprites:
+                b.left(speed)
             last_pos = 'Left'
             pos_x = last_pos
 
@@ -143,12 +163,15 @@ while running:
             computer_x -= speed
             wat_x -= speed
             ur_x -= speed
+            zap_x -= speed
             for o in block_sprites:
                 o.right(speed)
             for k in kill_sprites:
                 k.right(speed)
             for d in door_sprites:
                 d.right(speed)
+            for b in bdoor_sprites:
+                b.right(speed)
             last_pos = 'Right'
             pos_x = last_pos
 
@@ -174,12 +197,15 @@ while running:
         computer_y -= delta
         wat_y -= delta
         ur_y -= delta
+        zap_y -= delta
         for o in block_sprites:
             o.down(delta)
         for k in kill_sprites:
             k.down(delta)
         for d in door_sprites:
             d.down(delta)
+        for b in bdoor_sprites:
+            b.down(delta)
 
     elif player.up_cord <= 200:
 
@@ -192,12 +218,15 @@ while running:
         computer_y -= delta
         wat_y -= delta
         ur_y -= delta
+        zap_y -= delta
         for o in block_sprites:
             o.down(delta)
         for k in kill_sprites:
             k.down(delta)
         for d in door_sprites:
             d.down(delta)
+        for b in bdoor_sprites:
+            b.down(delta)
 
     if keys[pygame.K_n] and (not isShoot):
         isShoot = True
@@ -231,19 +260,13 @@ while running:
             isShoot = False
             shoot_count = 0
 
-    # if keys[pygame.K_s] and ('bottom' not in collision_list):
-    #     player.down(speed)
-    #
-    # if (keys[pygame.K_w] and not(player.rect.center[1] <= (height//6 - player.image.get_width()/2))) and\
-    #         ('top' not in collision_list):
-    #     player.up(speed)
-
     if keys[pygame.K_m] and (abs(player.rect.x - computer_x) < 150) and (abs(player.rect.y - computer_y) < 150):
         if computer_pressed == 0:
             password.passw(1984)
             lever1_pressed = 1
             lever2_pressed = 1
-
+    if keys[pygame.K_m] and (abs(player.rect.x - zap_x) < 150) and (abs(player.rect.y - zap_y) < 150):
+        paper.zap()
     if keys[pygame.K_m] and (abs(player.rect.x - lever1_x) < 150) and (abs(player.rect.y - lever1_y) < 150):
         if lever1_pressed == 0:
             lever1_pressed = 1
@@ -283,15 +306,18 @@ while running:
 
     if mpbg != died:
 
+        win.fill((0, 0, 0))
         win.blit(bg, (x_bg,y_bg))
-        door_sprites.draw(win)
+        door_sprites.update()
+        # bdoor_sprites.update()
         win.blit(mpbg, (x_mpbg, y_mpbg))
+        door_sprites.draw(win)
+        # bdoor_sprites.draw(win)
         win.blit(water_array[wat_anim], (wat_x, wat_y))
         win.blit(ur_array[ur_anim], (ur_x, ur_y))
         bullet_sprites.update()
         gg_sprites.update()
         block_sprites.update()
-        door_sprites.update()
         bullet_sprites.draw(win)
         gg_sprites.draw(win)
         # block_sprites.draw(win)

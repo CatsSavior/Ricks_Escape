@@ -2,9 +2,10 @@ import pygame
 import Block
 import doors
 import KillBlock
+import blockable_door
 
 
-def create_lvl(height, block_sprites, kill_sprites, door_sprites):
+def create_lvl(height, block_sprites, kill_sprites, door_sprites, bdoor_sprites):
     for _ in range(height-192, height, 128):
         for i in range(9):
             block_sprites.add(Block.Block(64+128*i, _))
@@ -115,5 +116,6 @@ def create_lvl(height, block_sprites, kill_sprites, door_sprites):
     for i in range(34):
         block_sprites.add(Block.Block(64+128*i, height + 320 + 128 * 22)) #-13
     door_sprites.add(doors.Door(26*128-64, height+320+128*6.5))
+    bdoor_sprites.add(blockable_door.Doorb(128*9 + 64, 128*14 + 64))
 
-    return block_sprites, kill_sprites, door_sprites
+    return block_sprites, kill_sprites, door_sprites, bdoor_sprites

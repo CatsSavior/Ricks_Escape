@@ -15,7 +15,7 @@ class Physics:
             if (o.rect.left in list(range(player.rect.x, player.rect.x + player.width))) \
                     or (o.rect.right in list(range(player.rect.x, player.rect.x + player.width))):
                 if (o.rect.center[1] in list(range(player.up_cord - 8, player.down_cord - 1))) and \
-                        (((player.right_cord + 4 - o.rect.left) < 20) and (5 <= (player.right_cord + 4 - o.rect.left))):
+                        (((player.right_cord + 4 - o.rect.left) < 29) and (9 <= (player.right_cord + 4 - o.rect.left))):
                     self.collision_list.append('right')
                 if (o.rect.center[1] in list(range(player.up_cord - 8, player.down_cord - 1))) and \
                         (((o.rect.right - player.left_cord) < 29) and (9 <= (o.rect.right - player.left_cord))):

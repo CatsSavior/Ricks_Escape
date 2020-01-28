@@ -18,11 +18,9 @@ def passw(true_pass):
     (x,y,fontSize) = (200,200,100)
     myFont = pygame.font.SysFont("None", fontSize)
     fontColor = (255,255,0)
-    bgColor = (255,255,255)
-
-
-
+    bgColor = (0,0,0)
     mainLoop = True
+
     while mainLoop:
         clock.tick(FPS)
         for event in pygame.event.get():
@@ -44,30 +42,32 @@ def passw(true_pass):
 
 
 
-    # for i in pygame.event.get():
         keys = pygame.key.get_pressed()
-    # if keys[pygame.KEYDOWN]:
-        if keys[pygame.K_LEFT]:
+        if keys[pygame.K_a]:
             if active != 0:
                 active -= 1
                 active_x -= 70
-        if keys[pygame.K_RIGHT]:
+        if keys[pygame.K_d]:
             if active != 3:
                 active += 1
                 active_x += 70
-        if keys[pygame.K_UP]:
+        if keys[pygame.K_w]:
             if all_num[active] != '9':
                 all_num[active] = str(int(all_num[active])+1)
             else:
                 all_num[active] = '0'
-        if keys[pygame.K_DOWN]:
+        if keys[pygame.K_s]:
             if all_num[active] != '0':
                 all_num[active] = str(int(all_num[active])-1)
             else:
                 all_num[active] = '9'
+        if keys[pygame.K_ESCAPE]:
+            mainLoop = False
+            return False
         if int(all_num[0]+all_num[1]+all_num[2]+all_num[3]) == true_pass:
             print('win')
             mainLoop = False
+            return True
         pygame.display.update()
 
 
